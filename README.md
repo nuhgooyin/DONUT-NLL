@@ -58,6 +58,17 @@ Next, follow the steps in the [TraDiE-policy repo](https://github.com/MKnoche/Tr
 
 ## Model Checkpoint
 
+> [!IMPORTANT]
+> This checkpoint is a **Distributed WOD Model** made using the
+> [Waymo Open Dataset](https://www.waymo.com/open), provided by Waymo LLC
+> under the
+> [Waymo Dataset License Agreement for Non-Commercial Use](https://waymo.com/open/terms).
+> By downloading or using this checkpoint, you agree to the terms of that
+> Agreement. Any downstream use or modification is subject to its terms,
+> including the **non-commercial restrictions in Section 4** (no use in
+> vehicles, production systems, or for any primarily commercial purpose).
+> A full copy of the Agreement is included in the archive.
+
 [DONUT-NLL (Generalized Gaussian + Step-NLL)](https://omnomnom.vision.rwth-aachen.de/data/donut-nll.tar.gz)
 
 Download and extract the checkpoint in `{args.ckpt_root}/donut-nll/epoch=29-step=228300.ckpt`.
