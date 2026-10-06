@@ -422,33 +422,31 @@ class DonutNLL(pl.LightningModule):
         pos: torch.Tensor,
         mask: torch.Tensor,
     ) -> torch.Tensor:
-        """Acceleration-based smoothness loss on predicted trajectory means.
+        """Acceleration-based smoothness loss on predicted trajectory means."""
+        # Only use the portion of the mask corresponding to the predicted
+        # trajectory. This is important for overprediction distributions,
+        # whose horizon can be shorter than the full prediction mask.
+        T = pos.shape[2]
+        mask = mask[:, :T]
 
-        Computes the mean squared L2 norm of the finite-difference acceleration
-        for each (agent, mode, timestep) triple, masked to valid timesteps only.
-        Acceleration at index ``t`` uses positions ``p[t], p[t+1], p[t+2]``, so
-        ``mask[:, 2:]`` is used as the validity gate.
-
-        Args:
-            pos:
-                Predicted position means with shape ``[N, K, T, 2]``.
-            mask:
-                Boolean validity mask with shape ``[N, T]``.
-
-        Returns:
-            Scalar smoothness loss (mean squared acceleration, masked).
-        """
-        # velocity: consecutive position differences  [N, K, T-1, 2]
+        # velocity: [N, K, T-1, 2]
         vel = pos[:, :, 1:, :] - pos[:, :, :-1, :]
-        # acceleration: consecutive velocity differences  [N, K, T-2, 2]
+
+        # acceleration: [N, K, T-2, 2]
         acc = vel[:, :, 1:, :] - vel[:, :, :-1, :]
-        # squared L2 norm per (agent, mode, timestep):  [N, K, T-2]
+
+        # squared L2 acceleration: [N, K, T-2]
         acc_sq = (acc ** 2).sum(dim=-1)
-        # mask: need p[t], p[t+1], p[t+2] all valid → gate on mask[:, 2:]
-        acc_mask = mask[:, 2:].float().unsqueeze(1)   # [N, 1, T-2]
+
+        # Need p[t], p[t+1], p[t+2] all valid.
+        # [N, T-2] -> [N, 1, T-2]
+        acc_mask = mask[:, 2:].float().unsqueeze(1)
+
         acc_sq = acc_sq * acc_mask
-        # normalise by the total number of valid (agent, mode, timestep) triples
+
+        # Number of valid (agent, mode, timestep) entries
         denom = acc_mask.sum() * acc_sq.shape[1]
+
         return acc_sq.sum() / denom.clamp(min=1.0)
 
     def compute_loss(self, data, traj_distrs):
