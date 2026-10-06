@@ -15,6 +15,7 @@ python train_donut_nll.py \
     --data_root ~/scratch/DONUT-NLL-og/data \
     --name donut-smoke-test \
     --max_epochs 2 \
+    --max_steps 20 \
     --batch_size 2 \
     --devices 1 \
     --num_workers 1 \

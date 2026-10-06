@@ -37,6 +37,7 @@ def load_args():
     parser.add_argument('--devices', type=int, default=1)
     parser.add_argument('--nodes', type=int, default=1)
     parser.add_argument('--max_epochs', type=int, default=30)
+    parser.add_argument('--max_steps', type=int, default=-1)
     parser.add_argument('--tqdm_update', type=int, default=1)
     parser.add_argument('--job_id', type=int, default=-1)
 
@@ -97,5 +98,6 @@ if __name__ == '__main__':
         accumulate_grad_batches=acc_batches,
         logger=logger,
         max_epochs=args.max_epochs,
+        max_steps=args.max_steps,
     )
     trainer.fit(model, datamodule, ckpt_path=ckpt_path)
