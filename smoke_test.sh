@@ -17,7 +17,7 @@ python train_donut_nll.py \
     --name donut-smoke-test \
     --max_epochs 2 \
     --max_steps 20 \
-    --batch_size 4 \
+    --batch_size 8 \
     --devices 1 \
     --num_workers 8 \
     --lambda_smooth 0.05
