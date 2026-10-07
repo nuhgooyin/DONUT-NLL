@@ -4,7 +4,7 @@
 #SBATCH --partition=gpubase_interac
 #SBATCH --gres=gpu:1
 #SBATCH --mem=32G
-#SBATCH --time=4-00:00:00
+#SBATCH --time=96:00:00
 #SBATCH --job-name=donut-full
 #SBATCH --output=logs/full_%j.log
 #SBATCH --cpus-per-task=8
