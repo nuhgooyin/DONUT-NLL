@@ -14,10 +14,10 @@ source ~/scratch/DONUT-NLL/.venv/bin/activate
 python train_donut_nll.py \
     --dataset waymo \
     --data_root ~/scratch/DONUT-NLL-og/data \
-    --name donut-batch8-test \
+    --name donut-batch2-test \
     --max_epochs 2 \
     --max_steps 20 \
-    --batch_size 8 \
+    --batch_size 2 \
     --devices 1 \
     --num_workers 8 \
     --lambda_smooth 0.05
