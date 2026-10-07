@@ -14,7 +14,7 @@ source ~/scratch/DONUT-NLL/.venv/bin/activate
 python train_donut_nll.py \
     --dataset waymo \
     --data_root ~/scratch/DONUT-NLL-og/data \
-    --name donut-smoke-test \
+    --name donut-batch8-test \
     --max_epochs 2 \
     --max_steps 20 \
     --batch_size 8 \
