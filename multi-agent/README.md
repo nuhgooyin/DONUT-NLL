@@ -107,3 +107,11 @@ own, though, so this needs testing.
 
 If possible, we should also run on Waymo's official
 interactive validation set for a direct comparison with MTR/MTR++.
+
+## Reproducing Main Tests
+
+```bash
+python count_interesting.py /scratch/nuhgoyin/DONUT-NLL/data/waymo/processed/val waymo_pairs.csv
+
+python interaction_tests.py joint /scratch/nuhgoyin/DONUT-NLL/samples/tune/full_default/merged/mAP_rectangles.pkl /scratch/nuhgoyin/DONUT-NLL/samples/gt_val.pkl waymo_pairs.csv
+```
