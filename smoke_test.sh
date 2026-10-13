@@ -1,4 +1,3 @@
-
 #!/bin/bash
 
 #SBATCH --account=aip-ajbonner
