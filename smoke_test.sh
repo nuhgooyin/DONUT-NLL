@@ -1,3 +1,4 @@
+
 #!/bin/bash
 
 #SBATCH --account=aip-ajbonner
@@ -5,8 +6,8 @@
 #SBATCH --gres=gpu:4
 #SBATCH --mem=32G
 #SBATCH --time=03:00:00
-#SBATCH --job-name=donut-4gpu-test
-#SBATCH --output=logs/4gpu_%j.log
+#SBATCH --job-name=donut-resume-test
+#SBATCH --output=logs/resume_%j.log
 #SBATCH --cpus-per-task=8
 
 cd ~/scratch/DONUT-NLL
@@ -18,7 +19,7 @@ python train_donut_nll.py \
     --data_root ~/scratch/DONUT-NLL-og/data \
     --name donut-4gpu-test \
     --batch_size 2 \
-    --max_steps 50 \
+    --max_steps 100 \
     --acc_batch_size 64 \
     --devices 4 \
     --num_workers 8 \
