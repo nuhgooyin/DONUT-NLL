@@ -16,9 +16,9 @@ source ~/scratch/DONUT-NLL/.venv/bin/activate
 python train_donut_nll.py \
     --dataset waymo \
     --data_root ~/scratch/DONUT-NLL-og/data \
-    --name donut-4gpu-large-test \
+    --name donut-v1-smoothness-test \
     --batch_size 2 \
-    --max_steps 1000 \
+    --max_steps 500 \
     --acc_batch_size 64 \
     --devices 4 \
     --num_workers 8 \
