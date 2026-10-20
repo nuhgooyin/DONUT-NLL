@@ -22,6 +22,11 @@ All scripts except `count_interesting.py` import `utils.py` from the TraDiE-poli
 
 ## Scripts
 
+- `measure_collisions.py` (earlier check, not used going forward) checks
+  whether the top predictions of two agents overlap more often than the real
+  agents did.
+- `analyze_collision_cases.py` (earlier check, not used going forward) looks
+  at those overlap cases and finds which agent's prediction was the wrong one.
 - `count_interesting.py` reads the processed validation scenes and counts how
   many have agents marked by Waymo as interacting (`interesting_mask`, which
   comes from Waymo's `objects_of_interest` field). Scenes with exactly two
@@ -33,10 +38,6 @@ All scripts except `count_interesting.py` import `utils.py` from the TraDiE-poli
   and whether any of the 36 do. Without a CSV it falls back to our own pairs
   (agents whose real paths came within 5 m of each other). `crowding` and
   `radius` are earlier single-agent checks.
-- `measure_collisions.py` checks whether the top predictions of two agents
-  overlap more often than the real agents did.
-- `analyze_collision_cases.py` looks at those overlap cases and finds which
-  agent's prediction was the wrong one.
 - `compare_joint_pi.py` runs the joint test on the default and `pi=mean`
   prediction files and shows both results.
 - `pair_breakdown.py` repeats the joint test but saves one row per pair and
