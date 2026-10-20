@@ -5,7 +5,7 @@
 #SBATCH --gres=gpu:4
 #SBATCH --mem=32G
 #SBATCH --time=03:00:00
-#SBATCH --job-name=donut-resume-test
+#SBATCH --job-name=donut-v1
 #SBATCH --output=logs/resume_%j.log
 #SBATCH --cpus-per-task=8
 
