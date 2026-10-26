@@ -47,6 +47,18 @@ All scripts except `count_interesting.py` import `utils.py` from the TraDiE-poli
   simple rule and saves the picks to a CSV for the grader. `--check` gives a quick 
   joint miss rate. This allows us to be more informed before attempting to
   enact a machine learning approach for pair prediction.
+- `joint_grader.py` scores an existing picker CSV; it does not choose pairs.
+  It reports joint miss rate and Waymo-style hard mAP for 3 s, 5 s, and 8 s.
+  Each pair must have six distinct guesses, and the CSV's `score` is used for
+  global mAP ranking. Use `--split tune` while developing and `--split report`
+  for final numbers. The trajectory-shape buckets are inferred from the
+  answer key's stored 0.5 s samples; current heading is estimated from current
+  velocity because it is not stored in this answer key. These scores are for
+  our analysis subset, not official Waymo challenge scores.
+  Use `--ranking rank` for `ranksum`, whose CSV `score` column is product
+  confidence rather than the picker's rank score. Rank-based mAP uses six
+  ordinal confidence levels, so it is not directly calibrated against
+  confidence-scored mAP.
 
 ## Results so far (as of Oct 20, 2026)
 
@@ -111,15 +123,16 @@ above.
 
 - These aren't official Waymo joint scores and can't be compared directly with
   MTR or MTR++. That is, we use a subset of the regular validation set instead of the
-  official interactive set. So far, we've only measured miss rate (not mAP), and we don't
-  average over agent types the way Waymo does. Comparing two pickers on these
-  same pairs should still be fair though.
+  official interactive set. The local grader reports Waymo-style hard mAP over
+  represented object types and trajectory-shape buckets, but estimates current
+  heading because the stored answer key does not contain it. Treat these as
+  internally comparable picker scores, not official Waymo challenge results.
 
 ## Task List
 
 Note: Tasks 1 and 2 are being worked on concurrently.
 
-1. Grader **(in progress)**: one script that scores any set of 6 pair predictions with joint miss rate and joint mAP, averaged the way Waymo does. Scenes are split into a tune half and a report half using the group's existing split from EXPERIMENTS.md (even MD5 hash of the scenario ID = tune, odd = report). We develop on the tune half and only report numbers from the report half. Once it works, the first step is to remeasure the gap with joint mAP: score the `product` baseline picker from `initial_pickers.py`, and compare it with a picker that cheats by using the answer key to always keep a correct pair when one exists (the best possible score).
+1. Grader **(MVP implemented; cluster validation pending)**: `joint_grader.py` scores any CSV of six pair predictions with joint miss rate and Waymo-style hard mAP. Scenes are split into a tune half and a report half using the group's existing split from EXPERIMENTS.md (even MD5 hash of the scenario ID = tune, odd = report). Develop on the tune half and report only the report-half results. First validate the `product` baseline against `interaction_tests.py`, then compare its mAP with an answer-key oracle picker that ranks a correct pair first whenever one exists.
 2. Hand-made picker **(in progress)**: score the 36 combinations with rules we write ourselves. A first version is in `initial_pickers.py`, with three rules that only use confidences (product baseline, diverse, ranksum). Planned next are rules that use the predicted paths, for example favouring pairs where one agent clearly reaches a crossing point before the other. Another idea to test could be to pair the same mode for both agents (mode 1 with mode 1, and so on), since DONUT-NLL predicts each mode for all agents together.
 3. Learned picker: a small model that predicts which combinations are correct from features such as both confidences, the distance between the two paths, whether they cross, and whether they come from the same mode. Trained on the tune half and reported on the report half.
 4. Improvements: remove features one at a time to see which ones matter.
@@ -137,3 +150,17 @@ python interaction_tests.py joint /scratch/nuhgoyin/DONUT-NLL/samples/tune/full_
 
 python pair_breakdown.py /scratch/nuhgoyin/DONUT-NLL/samples/tune/full_default/merged/mAP_rectangles.pkl /scratch/nuhgoyin/DONUT-NLL/samples/gt_val.pkl waymo_pairs.csv pair_rows.csv
 ```
+
+## Grading Picker Output
+
+Run the product picker to create a picks CSV, then grade either the tune or
+report half. The same prediction and answer-key files are used for both:
+
+```bash
+python initial_pickers.py /scratch/nuhgoyin/DONUT-NLL/samples/tune/full_default/merged/mAP_rectangles.pkl waymo_pairs.csv product product_picks.csv
+
+python joint_grader.py product_picks.csv /scratch/nuhgoyin/DONUT-NLL/samples/tune/full_default/merged/mAP_rectangles.pkl /scratch/nuhgoyin/DONUT-NLL/samples/gt_val.pkl --split tune
+python joint_grader.py product_picks.csv /scratch/nuhgoyin/DONUT-NLL/samples/tune/full_default/merged/mAP_rectangles.pkl /scratch/nuhgoyin/DONUT-NLL/samples/gt_val.pkl --split report
+```
+
+Run the grader's unit tests with `python -m unittest test_joint_grader.py`.

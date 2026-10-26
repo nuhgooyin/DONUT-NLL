@@ -35,12 +35,15 @@ def load_agents(scene_gt):
         valid = unpack_npy(g['eval_valid']).reshape(-1).astype(bool)
         vel = unpack_npy(g['cur_vel']).reshape(2).astype(np.float64)
         cur = pos[0] - 0.5 * vel if valid[0] else None
+        speed = float(np.hypot(*vel))
+        head = unpack_npy(g['eval_head']).reshape(-1).astype(np.float64)
         agents[aid] = {
             'type': int(unpack_npy(g['agent_type'])),
             'predicted': int(unpack_npy(g['category'])) == 1,
             'pos': pos, 'valid': valid,
-            'head': unpack_npy(g['eval_head']).reshape(-1).astype(np.float64),
-            'speed': float(np.hypot(*vel)), 'cur': cur,
+            'head': head,
+            'cur_head': float(np.arctan2(vel[1], vel[0])) if speed > 1e-6 else float(head[0]),
+            'speed': speed, 'cur': cur,
         }
     return agents
 
